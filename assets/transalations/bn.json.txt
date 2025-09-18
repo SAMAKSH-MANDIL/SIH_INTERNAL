@@ -1,0 +1,31 @@
+{
+  "app_name": "KisanOne",
+
+  "home": "হোম",
+  "crop_advisory": "ফসল পরামর্শ",
+  "soil_advisory": "মাটি পরামর্শ",
+  "schemes": "পরিকল্পনা",
+  "mandi_price": "মন্ডি মূল্য",
+  "store": "স্টোর",
+
+  "enquiry": "জিজ্ঞাসা",
+  "my_orders": "আমার অর্ডার",
+  "language": "ভাষা",
+  "faqs": "প্রশ্নোত্তর",
+  "logout": "লগ আউট",
+
+  "leaderboard_title": "লিডারবোর্ড",
+  "leaderboard_desc": "আপনার এলাকার শীর্ষ কৃষকদের দেখুন",
+  "view_leaderboard": "দেখুন",
+
+  "ask_anything": "কৃষি সম্পর্কে যেকোনো কিছু জিজ্ঞাসা করুন...",
+
+  "pm_kisan": "পিএম কৃষাণ প্রকল্প",
+  "pm_kisan_desc": "যোগ্য কৃষকদের আর্থিক সহায়তা।",
+  "crop_insurance": "ফসল বীমা",
+  "crop_insurance_desc": "ফসল ক্ষতির বিরুদ্ধে সুরক্ষা।",
+
+  "crop_doctor": "ফসল ডাক্তার",
+  "upload_from_gallery": "গ্যালারি থেকে আপলোড করুন",
+  "capture_from_camera": "ক্যামেরা থেকে ক্যাপচার করুন"
+}

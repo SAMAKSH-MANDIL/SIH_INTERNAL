@@ -1,0 +1,31 @@
+{
+  "app_name": "KisanOne",
+
+  "home": "होम",
+  "crop_advisory": "फसल सलाह",
+  "soil_advisory": "मिट्टी सलाह",
+  "schemes": "योजनाएँ",
+  "mandi_price": "मंडी मूल्य",
+  "store": "स्टोर",
+
+  "enquiry": "पूछताछ",
+  "my_orders": "मेरे ऑर्डर",
+  "language": "भाषा",
+  "faqs": "सामान्य प्रश्न",
+  "logout": "लॉग आउट",
+
+  "leaderboard_title": "लीडरबोर्ड",
+  "leaderboard_desc": "अपने क्षेत्र के शीर्ष किसानों को देखें",
+  "view_leaderboard": "देखें",
+
+  "ask_anything": "खेती से संबंधित कुछ भी पूछें...",
+
+  "pm_kisan": "प्रधानमंत्री किसान योजना",
+  "pm_kisan_desc": "योग्य किसानों को वित्तीय सहायता।",
+  "crop_insurance": "फसल बीमा",
+  "crop_insurance_desc": "फसल नुकसान के खिलाफ सुरक्षा।",
+
+  "crop_doctor": "फसल डॉक्टर",
+  "upload_from_gallery": "गैलरी से अपलोड करें",
+  "capture_from_camera": "कैमरे से कैप्चर करें"
+}
