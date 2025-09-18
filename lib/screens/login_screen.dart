@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart'; // Removed for demo mode
 import 'package:easy_localization/easy_localization.dart';
 import 'home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,8 +17,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
-  FirebaseAuth? _auth; // lazily initialized only on mobile
-  static const bool kUseDemoAuth = true; // set false to enable real Firebase flow
+  // FirebaseAuth? _auth; // Removed for demo mode
+  static const bool kUseDemoAuth = true; // Always true for demo mode
   
   String _verificationId = '';
   bool _isOtpSent = false;
@@ -98,9 +98,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    if (!kUseDemoAuth && !kIsWeb) {
-      _auth = FirebaseAuth.instance;
-    }
+    // Demo mode - no Firebase initialization needed
+    debugPrint('LoginScreen: Demo mode initialized');
   }
 
   Widget _buildNameInput() {
@@ -278,44 +277,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    if (kUseDemoAuth || kIsWeb) {
-      // Demo/local OTP flow for quick access (works on web too)
-      final nowMillis = DateTime.now().millisecondsSinceEpoch;
-      _demoOtp = ((nowMillis % 900000) + 100000).toString(); // 6-digit
-      setState(() {
-        _isOtpSent = true;
-        _isLoading = false;
-      });
-      _showSnackBar('Demo OTP: $_demoOtp');
-      return;
-    }
-
-    try {
-      await _auth!.verifyPhoneNumber(
-        phoneNumber: '+91${_phoneController.text}',
-        verificationCompleted: (PhoneAuthCredential credential) async {
-          await _auth!.signInWithCredential(credential);
-        },
-        verificationFailed: (FirebaseAuthException e) {
-          _showSnackBar(tr("verification_failed"));
-          setState(() => _isLoading = false);
-        },
-        codeSent: (String verificationId, int? resendToken) {
-          setState(() {
-            _verificationId = verificationId;
-            _isOtpSent = true;
-            _isLoading = false;
-          });
-          _showSnackBar(tr("otp_sent"));
-        },
-        codeAutoRetrievalTimeout: (String verificationId) {
-          _verificationId = verificationId;
-        },
-      );
-    } catch (e) {
-      _showSnackBar(tr("error_occurred"));
-      setState(() => _isLoading = false);
-    }
+    // Always use demo mode
+    final nowMillis = DateTime.now().millisecondsSinceEpoch;
+    _demoOtp = ((nowMillis % 900000) + 100000).toString(); // 6-digit
+    setState(() {
+      _isOtpSent = true;
+      _isLoading = false;
+    });
+    _showSnackBar('Demo OTP: $_demoOtp');
+    debugPrint('Demo OTP generated: $_demoOtp');
   }
 
   Future<void> _verifyOtp() async {
@@ -326,36 +296,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
-    if (kUseDemoAuth || kIsWeb) {
-      // Demo verification
-      if (_otpController.text == _demoOtp && _demoOtp.isNotEmpty) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('farmer_name', _nameController.text);
-        await prefs.setString('farmer_phone', _phoneController.text);
-        if (!mounted) return;
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(
-            builder: (_) => const HomePage(),
-          ),
-          (route) => false,
-        );
-      } else {
-        _showSnackBar(tr("invalid_otp"));
-        setState(() => _isLoading = false);
-      }
-      return;
-    }
-
-    try {
-      PhoneAuthCredential credential = PhoneAuthProvider.credential(
-        verificationId: _verificationId,
-        smsCode: _otpController.text,
-      );
-
-      await _auth!.signInWithCredential(credential);
+    // Always use demo verification
+    if (_otpController.text == _demoOtp && _demoOtp.isNotEmpty) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('farmer_name', _nameController.text);
       await prefs.setString('farmer_phone', _phoneController.text);
+      debugPrint('Demo login successful for: ${_nameController.text}');
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
@@ -363,7 +309,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         (route) => false,
       );
-    } catch (e) {
+    } else {
       _showSnackBar(tr("invalid_otp"));
       setState(() => _isLoading = false);
     }
