@@ -16,11 +16,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseAuth? _auth; // lazily initialized only on mobile
+  static const bool kUseDemoAuth = true; // set false to enable real Firebase flow
   
   String _verificationId = '';
   bool _isOtpSent = false;
   bool _isLoading = false;
+  String _demoOtp = '';
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +92,14 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (!kUseDemoAuth && !kIsWeb) {
+      _auth = FirebaseAuth.instance;
+    }
   }
 
   Widget _buildNameInput() {
@@ -251,10 +261,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _sendOtp() async {
-    if (kIsWeb) {
-      _showSnackBar('Phone auth is disabled on web in this build.');
-      return;
-    }
     if (_nameController.text.isEmpty) {
       _showSnackBar(tr("enter_name"));
       return;
@@ -266,11 +272,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
+    if (kUseDemoAuth || kIsWeb) {
+      // Demo/local OTP flow for quick access (works on web too)
+      final nowMillis = DateTime.now().millisecondsSinceEpoch;
+      _demoOtp = ((nowMillis % 900000) + 100000).toString(); // 6-digit
+      setState(() {
+        _isOtpSent = true;
+        _isLoading = false;
+      });
+      _showSnackBar('Demo OTP: $_demoOtp');
+      return;
+    }
+
     try {
-      await _auth.verifyPhoneNumber(
+      await _auth!.verifyPhoneNumber(
         phoneNumber: '+91${_phoneController.text}',
         verificationCompleted: (PhoneAuthCredential credential) async {
-          await _auth.signInWithCredential(credential);
+          await _auth!.signInWithCredential(credential);
         },
         verificationFailed: (FirebaseAuthException e) {
           _showSnackBar(tr("verification_failed"));
@@ -295,10 +313,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _verifyOtp() async {
-    if (kIsWeb) {
-      _showSnackBar('Phone auth is disabled on web in this build.');
-      return;
-    }
     if (_otpController.text.isEmpty) {
       _showSnackBar(tr("enter_otp"));
       return;
@@ -306,15 +320,36 @@ class _LoginScreenState extends State<LoginScreen> {
 
     setState(() => _isLoading = true);
 
+    if (kUseDemoAuth || kIsWeb) {
+      // Demo verification
+      if (_otpController.text == _demoOtp && _demoOtp.isNotEmpty) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('farmer_name', _nameController.text);
+        await prefs.setString('farmer_phone', _phoneController.text);
+        if (!mounted) return;
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => HomePage(
+              themeMode: ThemeMode.system,
+              onThemeChanged: (_) {},
+            ),
+          ),
+          (route) => false,
+        );
+      } else {
+        _showSnackBar(tr("invalid_otp"));
+        setState(() => _isLoading = false);
+      }
+      return;
+    }
+
     try {
       PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: _verificationId,
         smsCode: _otpController.text,
       );
 
-      await _auth.signInWithCredential(credential);
-      // Save name and phone locally for greeting
-      // Using SharedPreferences avoids extra setup
+      await _auth!.signInWithCredential(credential);
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('farmer_name', _nameController.text);
       await prefs.setString('farmer_phone', _phoneController.text);
