@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'language_selection_screen.dart';
 
@@ -13,11 +14,21 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint('SplashScreen: initState called');
     Future.delayed(const Duration(seconds: 2), () {
-      if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const LanguageSelectionScreen()),
-      );
+      debugPrint('SplashScreen: Navigation starting');
+      if (!mounted) {
+        debugPrint('SplashScreen: Widget not mounted, skipping navigation');
+        return;
+      }
+      try {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const LanguageSelectionScreen()),
+        );
+        debugPrint('SplashScreen: Navigation completed');
+      } catch (e) {
+        debugPrint('SplashScreen: Navigation error: $e');
+      }
     });
   }
 

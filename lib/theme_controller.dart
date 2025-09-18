@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeController extends ChangeNotifier {
@@ -11,10 +12,16 @@ class ThemeController extends ChangeNotifier {
   ThemeMode get themeMode => _themeMode;
 
   Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final int index = prefs.getInt(_prefsKey) ?? ThemeMode.system.index;
-    _themeMode = ThemeMode.values[index];
-    notifyListeners();
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final int index = prefs.getInt(_prefsKey) ?? ThemeMode.system.index;
+      _themeMode = ThemeMode.values[index];
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error loading theme: $e');
+      _themeMode = ThemeMode.system;
+      notifyListeners();
+    }
   }
 
   Future<void> setTheme(ThemeMode mode) async {

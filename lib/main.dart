@@ -11,12 +11,20 @@ import 'theme_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (kIsWeb) {
-    // Avoid web crash if Firebase web options are not configured yet.
-    debugPrint('Skipping Firebase.initializeApp() on web. Configure Firebase for web to enable auth.');
-  } else {
-    await Firebase.initializeApp();
+  
+  try {
+    if (kIsWeb) {
+      // Avoid web crash if Firebase web options are not configured yet.
+      debugPrint('Skipping Firebase.initializeApp() on web. Configure Firebase for web to enable auth.');
+    } else {
+      await Firebase.initializeApp();
+      debugPrint('Firebase initialized successfully');
+    }
+  } catch (e) {
+    debugPrint('Firebase initialization failed: $e');
+    // Continue without Firebase - app should still work
   }
+  
   await EasyLocalization.ensureInitialized();
 
   runApp(
