@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../theme_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'language_selection_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/crop_advisory_tab.dart';
 import '../tabs/soil_advisory_tab.dart';
@@ -114,18 +116,29 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.white,
               child: Icon(Icons.person, color: Colors.green),
             ),
-            onSelected: (value) {
+            onSelected: (value) async {
               if (value == 'language') {
                 _showLanguageDialog(context);
               } else if (value == 'logout') {
-                if (kIsWeb) {
-                  // Skip signOut on web if Firebase isn't initialized.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(tr("logout"))),
-                  );
-                } else {
-                  FirebaseAuth.instance.signOut();
-                }
+                try {
+                  if (!kIsWeb) {
+                    await FirebaseAuth.instance.signOut();
+                  }
+                } catch (_) {}
+
+                try {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove('farmer_name');
+                  await prefs.remove('farmer_phone');
+                } catch (_) {}
+
+                if (!mounted) return;
+                Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute(
+                    builder: (_) => const LanguageSelectionScreen(),
+                  ),
+                  (route) => false,
+                );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('$value ${tr("selected")}')),

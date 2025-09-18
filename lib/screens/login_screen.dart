@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'language_selection_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -249,7 +250,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildBackButton() {
     return TextButton(
-      onPressed: () => Navigator.pop(context),
+      onPressed: () => Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => const LanguageSelectionScreen(),
+        ),
+        (route) => false,
+      ),
       child: Text(
         tr("back_to_language"),
         style: const TextStyle(
