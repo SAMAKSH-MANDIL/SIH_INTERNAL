@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -11,6 +14,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   
@@ -21,61 +25,90 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green.shade50,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.green,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: const Icon(
-                  Icons.phone_android,
-                  size: 60,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 30),
-              Text(
-                tr("login_title"),
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
-                ),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                tr("login_subtitle"),
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 40),
-              
-              if (!_isOtpSent) ...[
-                _buildPhoneInput(),
-                const SizedBox(height: 20),
-                _buildSendOtpButton(),
-              ] else ...[
-                _buildOtpInput(),
-                const SizedBox(height: 20),
-                _buildVerifyOtpButton(),
-                const SizedBox(height: 10),
-                _buildResendButton(),
-              ],
-              
-              const SizedBox(height: 30),
-              _buildBackButton(),
-            ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF200122), Color(0xFF6f0000)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
           ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20.0),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 560),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/kisanone_logo.png',
+                      width: 120,
+                      fit: BoxFit.contain,
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      tr('login_title'),
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      tr('login_subtitle'),
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white70,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 40),
+                    if (!_isOtpSent) ...[
+                      _buildNameInput(),
+                      const SizedBox(height: 12),
+                      _buildPhoneInput(),
+                      const SizedBox(height: 20),
+                      _buildSendOtpButton(),
+                    ] else ...[
+                      _buildOtpInput(),
+                      const SizedBox(height: 20),
+                      _buildVerifyOtpButton(),
+                      const SizedBox(height: 10),
+                      _buildResendButton(),
+                    ],
+                    const SizedBox(height: 30),
+                    _buildBackButton(),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNameInput() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.06),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: Colors.white24),
+      ),
+      child: TextField(
+        controller: _nameController,
+        style: const TextStyle(color: Colors.white),
+        textCapitalization: TextCapitalization.words,
+        decoration: InputDecoration(
+          hintText: tr("farmer_name_hint"),
+          hintStyle: const TextStyle(color: Colors.white70),
+          prefixIcon: const Icon(Icons.person, color: Colors.white70),
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.all(20),
         ),
       ),
     );
@@ -84,22 +117,18 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildPhoneInput() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.06),
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 10,
-          ),
-        ],
+        border: Border.all(color: Colors.white24),
       ),
       child: TextField(
         controller: _phoneController,
+        style: const TextStyle(color: Colors.white),
         keyboardType: TextInputType.phone,
         decoration: InputDecoration(
           hintText: tr("phone_hint"),
-          prefixIcon: const Icon(Icons.phone, color: Colors.green),
+          hintStyle: const TextStyle(color: Colors.white70),
+          prefixIcon: const Icon(Icons.phone, color: Colors.white70),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(20),
         ),
@@ -110,22 +139,18 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildOtpInput() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.06),
         borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 10,
-          ),
-        ],
+        border: Border.all(color: Colors.white24),
       ),
       child: TextField(
         controller: _otpController,
+        style: const TextStyle(color: Colors.white),
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
           hintText: tr("otp_hint"),
-          prefixIcon: const Icon(Icons.security, color: Colors.green),
+          hintStyle: const TextStyle(color: Colors.white70),
+          prefixIcon: const Icon(Icons.security, color: Colors.white70),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(20),
         ),
@@ -140,19 +165,26 @@ class _LoginScreenState extends State<LoginScreen> {
       child: ElevatedButton(
         onPressed: _isLoading ? null : _sendOtp,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
+          padding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         ),
         child: _isLoading
             ? const CircularProgressIndicator(color: Colors.white)
-            : Text(
-                tr("send_otp"),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+            : Ink(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(colors: [Color(0xFF11998e), Color(0xFF38ef7d)]),
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                ),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    tr("send_otp"),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
       ),
@@ -166,19 +198,26 @@ class _LoginScreenState extends State<LoginScreen> {
       child: ElevatedButton(
         onPressed: _isLoading ? null : _verifyOtp,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
+          padding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         ),
         child: _isLoading
             ? const CircularProgressIndicator(color: Colors.white)
-            : Text(
-                tr("verify_otp"),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+            : Ink(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(colors: [Color(0xFFED4264), Color(0xFFFFEDBC)]),
+                  borderRadius: BorderRadius.all(Radius.circular(14)),
+                ),
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    tr("verify_otp"),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
       ),
@@ -191,8 +230,8 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Text(
         tr("resend_otp"),
         style: const TextStyle(
-          color: Colors.green,
-          fontWeight: FontWeight.w600,
+          color: Colors.white70,
+          fontWeight: FontWeight.w700,
         ),
       ),
     );
@@ -204,14 +243,22 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Text(
         tr("back_to_language"),
         style: const TextStyle(
-          color: Colors.grey,
-          fontWeight: FontWeight.w500,
+          color: Colors.white70,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
   Future<void> _sendOtp() async {
+    if (kIsWeb) {
+      _showSnackBar('Phone auth is disabled on web in this build.');
+      return;
+    }
+    if (_nameController.text.isEmpty) {
+      _showSnackBar(tr("enter_name"));
+      return;
+    }
     if (_phoneController.text.isEmpty) {
       _showSnackBar(tr("enter_phone"));
       return;
@@ -248,6 +295,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _verifyOtp() async {
+    if (kIsWeb) {
+      _showSnackBar('Phone auth is disabled on web in this build.');
+      return;
+    }
     if (_otpController.text.isEmpty) {
       _showSnackBar(tr("enter_otp"));
       return;
@@ -262,6 +313,21 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       await _auth.signInWithCredential(credential);
+      // Save name and phone locally for greeting
+      // Using SharedPreferences avoids extra setup
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('farmer_name', _nameController.text);
+      await prefs.setString('farmer_phone', _phoneController.text);
+      if (!mounted) return;
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (_) => HomePage(
+            themeMode: ThemeMode.system,
+            onThemeChanged: (_) {},
+          ),
+        ),
+        (route) => false,
+      );
     } catch (e) {
       _showSnackBar(tr("invalid_otp"));
       setState(() => _isLoading = false);

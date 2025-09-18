@@ -57,7 +57,7 @@
     },
     {
       "name": "cached_network_image",
-      "version": "3.3.1",
+      "version": "3.4.1",
       "dependencies": [
         "cached_network_image_platform_interface",
         "cached_network_image_web",
@@ -68,7 +68,7 @@
     },
     {
       "name": "weather",
-      "version": "3.0.0",
+      "version": "3.2.1",
       "dependencies": [
         "flutter",
         "http"
@@ -76,11 +76,12 @@
     },
     {
       "name": "geolocator",
-      "version": "9.0.2",
+      "version": "14.0.2",
       "dependencies": [
         "flutter",
         "geolocator_android",
         "geolocator_apple",
+        "geolocator_linux",
         "geolocator_platform_interface",
         "geolocator_web",
         "geolocator_windows"
@@ -88,22 +89,22 @@
     },
     {
       "name": "speech_to_text",
-      "version": "6.6.2",
+      "version": "7.3.0",
       "dependencies": [
         "clock",
         "flutter",
         "flutter_web_plugins",
-        "js",
         "json_annotation",
         "meta",
         "pedantic",
-        "speech_to_text_macos",
-        "speech_to_text_platform_interface"
+        "speech_to_text_platform_interface",
+        "speech_to_text_windows",
+        "web"
       ]
     },
     {
       "name": "cloud_firestore",
-      "version": "4.17.5",
+      "version": "6.0.1",
       "dependencies": [
         "cloud_firestore_platform_interface",
         "cloud_firestore_web",
@@ -116,7 +117,7 @@
     },
     {
       "name": "firebase_auth",
-      "version": "4.20.0",
+      "version": "6.0.2",
       "dependencies": [
         "firebase_auth_platform_interface",
         "firebase_auth_web",
@@ -128,7 +129,7 @@
     },
     {
       "name": "firebase_core",
-      "version": "2.32.0",
+      "version": "4.1.0",
       "dependencies": [
         "firebase_core_platform_interface",
         "firebase_core_web",
@@ -138,16 +139,17 @@
     },
     {
       "name": "http",
-      "version": "0.13.6",
+      "version": "1.5.0",
       "dependencies": [
         "async",
         "http_parser",
-        "meta"
+        "meta",
+        "web"
       ]
     },
     {
       "name": "image_picker",
-      "version": "0.8.9",
+      "version": "1.2.0",
       "dependencies": [
         "flutter",
         "image_picker_android",
@@ -335,7 +337,7 @@
     },
     {
       "name": "flutter_cache_manager",
-      "version": "3.3.1",
+      "version": "3.4.1",
       "dependencies": [
         "clock",
         "collection",
@@ -351,24 +353,37 @@
     },
     {
       "name": "cached_network_image_web",
-      "version": "1.2.0",
+      "version": "1.3.1",
       "dependencies": [
         "cached_network_image_platform_interface",
         "flutter",
-        "flutter_cache_manager"
+        "flutter_cache_manager",
+        "web"
       ]
     },
     {
       "name": "cached_network_image_platform_interface",
-      "version": "4.0.0",
+      "version": "4.1.1",
       "dependencies": [
         "flutter",
         "flutter_cache_manager"
       ]
     },
     {
+      "name": "geolocator_linux",
+      "version": "0.2.3",
+      "dependencies": [
+        "dbus",
+        "flutter",
+        "geoclue",
+        "geolocator_platform_interface",
+        "gsettings",
+        "package_info_plus"
+      ]
+    },
+    {
       "name": "geolocator_windows",
-      "version": "0.1.3",
+      "version": "0.2.5",
       "dependencies": [
         "flutter",
         "geolocator_platform_interface"
@@ -376,11 +391,12 @@
     },
     {
       "name": "geolocator_web",
-      "version": "2.2.1",
+      "version": "4.1.3",
       "dependencies": [
         "flutter",
         "flutter_web_plugins",
-        "geolocator_platform_interface"
+        "geolocator_platform_interface",
+        "web"
       ]
     },
     {
@@ -393,7 +409,7 @@
     },
     {
       "name": "geolocator_android",
-      "version": "4.6.2",
+      "version": "5.0.2",
       "dependencies": [
         "flutter",
         "geolocator_platform_interface",
@@ -412,8 +428,16 @@
       ]
     },
     {
-      "name": "js",
-      "version": "0.7.2",
+      "name": "speech_to_text_windows",
+      "version": "1.0.0+beta.8",
+      "dependencies": [
+        "flutter",
+        "speech_to_text_platform_interface"
+      ]
+    },
+    {
+      "name": "web",
+      "version": "1.1.1",
       "dependencies": []
     },
     {
@@ -436,15 +460,6 @@
       ]
     },
     {
-      "name": "speech_to_text_macos",
-      "version": "1.1.0",
-      "dependencies": [
-        "flutter",
-        "plugin_platform_interface",
-        "speech_to_text_platform_interface"
-      ]
-    },
-    {
       "name": "speech_to_text_platform_interface",
       "version": "2.3.0",
       "dependencies": [
@@ -455,7 +470,7 @@
     },
     {
       "name": "firebase_core_platform_interface",
-      "version": "5.4.2",
+      "version": "6.0.0",
       "dependencies": [
         "collection",
         "flutter",
@@ -466,7 +481,7 @@
     },
     {
       "name": "cloud_firestore_web",
-      "version": "3.12.5",
+      "version": "5.0.1",
       "dependencies": [
         "_flutterfire_internals",
         "cloud_firestore_platform_interface",
@@ -479,7 +494,7 @@
     },
     {
       "name": "cloud_firestore_platform_interface",
-      "version": "6.2.5",
+      "version": "7.0.1",
       "dependencies": [
         "_flutterfire_internals",
         "collection",
@@ -491,7 +506,7 @@
     },
     {
       "name": "firebase_auth_web",
-      "version": "5.12.0",
+      "version": "6.0.2",
       "dependencies": [
         "firebase_auth_platform_interface",
         "firebase_core",
@@ -505,19 +520,20 @@
     },
     {
       "name": "firebase_auth_platform_interface",
-      "version": "7.3.0",
+      "version": "8.1.1",
       "dependencies": [
         "_flutterfire_internals",
         "collection",
         "firebase_core",
         "flutter",
+        "http",
         "meta",
         "plugin_platform_interface"
       ]
     },
     {
       "name": "firebase_core_web",
-      "version": "2.17.5",
+      "version": "3.1.0",
       "dependencies": [
         "firebase_core_platform_interface",
         "flutter",
@@ -594,17 +610,18 @@
     },
     {
       "name": "image_picker_for_web",
-      "version": "2.2.0",
+      "version": "3.1.0",
       "dependencies": [
         "flutter",
         "flutter_web_plugins",
         "image_picker_platform_interface",
-        "mime"
+        "mime",
+        "web"
       ]
     },
     {
       "name": "image_picker_android",
-      "version": "0.8.13+1",
+      "version": "0.8.13+3",
       "dependencies": [
         "flutter",
         "flutter_plugin_android_lifecycle",
@@ -668,6 +685,17 @@
       ]
     },
     {
+      "name": "leak_tracker",
+      "version": "11.0.2",
+      "dependencies": [
+        "clock",
+        "collection",
+        "meta",
+        "path",
+        "vm_service"
+      ]
+    },
+    {
       "name": "term_glyph",
       "version": "1.2.2",
       "dependencies": []
@@ -724,11 +752,6 @@
       ]
     },
     {
-      "name": "web",
-      "version": "0.5.1",
-      "dependencies": []
-    },
-    {
       "name": "plugin_platform_interface",
       "version": "2.1.8",
       "dependencies": [
@@ -770,7 +793,7 @@
     },
     {
       "name": "rxdart",
-      "version": "0.27.7",
+      "version": "0.28.0",
       "dependencies": []
     },
     {
@@ -786,8 +809,50 @@
       ]
     },
     {
+      "name": "package_info_plus",
+      "version": "8.3.1",
+      "dependencies": [
+        "clock",
+        "ffi",
+        "flutter",
+        "flutter_web_plugins",
+        "http",
+        "meta",
+        "package_info_plus_platform_interface",
+        "path",
+        "web",
+        "win32"
+      ]
+    },
+    {
+      "name": "gsettings",
+      "version": "0.2.8",
+      "dependencies": [
+        "dbus",
+        "xdg_directories"
+      ]
+    },
+    {
+      "name": "geoclue",
+      "version": "0.1.1",
+      "dependencies": [
+        "dbus",
+        "meta"
+      ]
+    },
+    {
+      "name": "dbus",
+      "version": "0.7.11",
+      "dependencies": [
+        "args",
+        "ffi",
+        "meta",
+        "xml"
+      ]
+    },
+    {
       "name": "_flutterfire_internals",
-      "version": "1.3.35",
+      "version": "1.3.61",
       "dependencies": [
         "collection",
         "firebase_core",
@@ -850,7 +915,7 @@
     },
     {
       "name": "mime",
-      "version": "1.0.6",
+      "version": "2.0.0",
       "dependencies": []
     },
     {
@@ -859,6 +924,11 @@
       "dependencies": [
         "flutter"
       ]
+    },
+    {
+      "name": "vm_service",
+      "version": "15.0.2",
+      "dependencies": []
     },
     {
       "name": "ffi",
@@ -928,7 +998,7 @@
     },
     {
       "name": "sqflite_android",
-      "version": "2.4.1",
+      "version": "2.4.2+2",
       "dependencies": [
         "flutter",
         "path",
@@ -953,25 +1023,42 @@
       ]
     },
     {
+      "name": "win32",
+      "version": "5.14.0",
+      "dependencies": [
+        "ffi"
+      ]
+    },
+    {
+      "name": "package_info_plus_platform_interface",
+      "version": "3.2.1",
+      "dependencies": [
+        "flutter",
+        "meta",
+        "plugin_platform_interface"
+      ]
+    },
+    {
+      "name": "xml",
+      "version": "6.6.1",
+      "dependencies": [
+        "collection",
+        "meta",
+        "petitparser"
+      ]
+    },
+    {
       "name": "synchronized",
       "version": "3.4.0",
       "dependencies": []
     },
     {
-      "name": "leak_tracker",
-      "version": "11.0.2",
+      "name": "petitparser",
+      "version": "7.0.1",
       "dependencies": [
-        "clock",
         "collection",
-        "meta",
-        "path",
-        "vm_service"
+        "meta"
       ]
-    },
-    {
-      "name": "vm_service",
-      "version": "15.0.0",
-      "dependencies": []
     }
   ],
   "configVersion": 1

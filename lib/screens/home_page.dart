@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
@@ -127,7 +128,14 @@ class _HomePageState extends State<HomePage> {
               if (value == 'language') {
                 _showLanguageDialog(context);
               } else if (value == 'logout') {
-                FirebaseAuth.instance.signOut();
+                if (kIsWeb) {
+                  // Skip signOut on web if Firebase isn't initialized.
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(tr("logout"))),
+                  );
+                } else {
+                  FirebaseAuth.instance.signOut();
+                }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('$value ${tr("selected")}')),

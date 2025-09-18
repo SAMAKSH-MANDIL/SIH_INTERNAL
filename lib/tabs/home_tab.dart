@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({Key? key}) : super(key: key);
@@ -15,11 +17,13 @@ class _HomeTabState extends State<HomeTab> {
   String _weather = "25°C";
   String _humidity = "65%";
   String _windSpeed = "12 km/h";
+  String _farmerName = 'Farmer';
 
   @override
   void initState() {
     super.initState();
     _getCurrentLocation();
+    _loadSavedProfile();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -43,9 +47,16 @@ class _HomeTabState extends State<HomeTab> {
     }
   }
 
+  Future<void> _loadSavedProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _farmerName = prefs.getString('farmer_name') ?? 'Farmer';
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = kIsWeb ? null : FirebaseAuth.instance.currentUser;
     
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -68,7 +79,7 @@ class _HomeTabState extends State<HomeTab> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${tr('welcome')}, ${user?.phoneNumber ?? 'Farmer'}!",
+                  "${tr('welcome')}, ${_farmerName.isNotEmpty ? _farmerName : (user?.phoneNumber ?? 'Farmer')}!",
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
