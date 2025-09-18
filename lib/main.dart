@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_core/firebase_core.dart'; // Disabled for demo mode
+// import 'package:firebase_auth/firebase_auth.dart'; // Disabled for demo mode
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/language_selection_screen.dart';
 import 'screens/splash_screen.dart';
@@ -12,21 +12,8 @@ import 'theme_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Firebase with error handling
-  bool firebaseInitialized = false;
-  try {
-    if (kIsWeb) {
-      debugPrint('Skipping Firebase.initializeApp() on web. Configure Firebase for web to enable auth.');
-    } else {
-      await Firebase.initializeApp();
-      firebaseInitialized = true;
-      debugPrint('Firebase initialized successfully');
-    }
-  } catch (e) {
-    debugPrint('Firebase initialization failed: $e');
-    debugPrint('App will run in demo mode without Firebase');
-    firebaseInitialized = false;
-  }
+  // Demo mode - no Firebase initialization
+  debugPrint('Running in demo mode - Firebase disabled');
   
   await EasyLocalization.ensureInitialized();
 
@@ -35,15 +22,13 @@ void main() async {
       supportedLocales: const [Locale('en'), Locale('hi'), Locale('bn'), Locale('kho')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
-      child: MyApp(firebaseInitialized: firebaseInitialized),
+      child: const MyApp(),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
-  final bool firebaseInitialized;
-  
-  const MyApp({Key? key, required this.firebaseInitialized}) : super(key: key);
+  const MyApp({Key? key}) : super(key: key);
   
   @override
   State<MyApp> createState() => _MyAppState();
@@ -86,39 +71,18 @@ class _MyAppState extends State<MyApp> {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      home: SplashScreen(firebaseInitialized: widget.firebaseInitialized),
+      home: const SplashScreen(),
     );
   }
 }
 
 class AuthWrapper extends StatelessWidget {
-  final bool firebaseInitialized;
-  
-  const AuthWrapper({Key? key, required this.firebaseInitialized}) : super(key: key);
+  const AuthWrapper({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // If Firebase is not initialized, go directly to language selection
-    if (!firebaseInitialized || kIsWeb) {
-      debugPrint('AuthWrapper: Firebase not initialized, using demo mode');
-      return const LanguageSelectionScreen();
-    }
-    
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
-        }
-        
-        if (snapshot.hasData) {
-          return const HomePage();
-        }
-        
-        return const LanguageSelectionScreen();
-      },
-    );
+    // Demo mode - always go to language selection
+    debugPrint('AuthWrapper: Demo mode - going to language selection');
+    return const LanguageSelectionScreen();
   }
 }

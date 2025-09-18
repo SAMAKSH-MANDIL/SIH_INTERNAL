@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart'; // Removed Firebase dependency
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeTab extends StatefulWidget {
@@ -56,8 +56,7 @@ class _HomeTabState extends State<HomeTab> {
 
   @override
   Widget build(BuildContext context) {
-    final user = kIsWeb ? null : FirebaseAuth.instance.currentUser;
-    
+    // Removed Firebase user dependency - using demo mode
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -79,7 +78,7 @@ class _HomeTabState extends State<HomeTab> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "${tr('welcome')}, ${_farmerName.isNotEmpty ? _farmerName : (user?.phoneNumber ?? 'Farmer')}!",
+                  "${tr('welcome')}, ${_farmerName.isNotEmpty ? _farmerName : 'Farmer'}!",
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,

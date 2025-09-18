@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../theme_controller.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_auth/firebase_auth.dart'; // Removed Firebase dependency
 import 'language_selection_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../tabs/home_tab.dart';
@@ -120,17 +120,15 @@ class _HomePageState extends State<HomePage> {
               if (value == 'language') {
                 _showLanguageDialog(context);
               } else if (value == 'logout') {
-                try {
-                  if (!kIsWeb) {
-                    await FirebaseAuth.instance.signOut();
-                  }
-                } catch (_) {}
-
+                // Demo logout - just clear local data
                 try {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.remove('farmer_name');
                   await prefs.remove('farmer_phone');
-                } catch (_) {}
+                  debugPrint('Demo logout: Local data cleared');
+                } catch (e) {
+                  debugPrint('Demo logout error: $e');
+                }
 
                 if (!mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(

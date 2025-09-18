@@ -4,9 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'language_selection_screen.dart';
 
 class SplashScreen extends StatefulWidget {
-  final bool firebaseInitialized;
-  
-  const SplashScreen({Key? key, required this.firebaseInitialized}) : super(key: key);
+  const SplashScreen({Key? key}) : super(key: key);
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -16,7 +14,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    debugPrint('SplashScreen: initState called, Firebase initialized: ${widget.firebaseInitialized}');
+    debugPrint('SplashScreen: initState called - Demo mode');
     Future.delayed(const Duration(seconds: 2), () {
       debugPrint('SplashScreen: Navigation starting');
       if (!mounted) {
