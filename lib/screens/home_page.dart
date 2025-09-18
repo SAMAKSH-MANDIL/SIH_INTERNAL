@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
+import '../theme_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:geolocator/geolocator.dart';
 import '../tabs/home_tab.dart';
 import '../tabs/crop_advisory_tab.dart';
 import '../tabs/soil_advisory_tab.dart';
@@ -11,14 +11,7 @@ import '../tabs/store_tab.dart';
 import '../tabs/schemes_tab.dart';
 
 class HomePage extends StatefulWidget {
-  final ThemeMode themeMode;
-  final Function(ThemeMode) onThemeChanged;
-
-  const HomePage({
-    Key? key,
-    required this.themeMode,
-    required this.onThemeChanged,
-  }) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -27,6 +20,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   final PageController _pageController = PageController();
+  final ThemeController _themeController = ThemeController.instance;
 
   List<Widget> get _tabs => [
         const HomeTab(),
@@ -104,16 +98,12 @@ class _HomePageState extends State<HomePage> {
               children: [
                 IconButton(
                   icon: Icon(
-                    widget.themeMode == ThemeMode.light
+                    _themeController.themeMode == ThemeMode.light
                         ? Icons.light_mode
                         : Icons.dark_mode,
                   ),
                   onPressed: () {
-                    widget.onThemeChanged(
-                      widget.themeMode == ThemeMode.light
-                          ? ThemeMode.dark
-                          : ThemeMode.light,
-                    );
+                    _themeController.toggle();
                   },
                 ),
               ],

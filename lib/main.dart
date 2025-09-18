@@ -3,10 +3,11 @@ import 'package:flutter/foundation.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'screens/language_selection_screen.dart';
 import 'screens/splash_screen.dart';
 import 'screens/home_page.dart';
+import 'theme_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,25 +35,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = ThemeMode.system;
+  final ThemeController _themeController = ThemeController.instance;
 
   @override
   void initState() {
     super.initState();
-    _loadThemeMode();
+    _themeController.addListener(_onThemeChanged);
+    _themeController.load();
   }
 
-  _loadThemeMode() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _themeMode = ThemeMode.values[prefs.getInt('themeMode') ?? 0];
-    });
-  }
-
-  _saveThemeMode(ThemeMode mode) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('themeMode', mode.index);
-  }
+  void _onThemeChanged() => setState(() {});
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +66,7 @@ class _MyAppState extends State<MyApp> {
           foregroundColor: Colors.white,
         ),
       ),
-      themeMode: _themeMode,
+      themeMode: _themeController.themeMode,
       debugShowCheckedModeBanner: false,
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
@@ -85,14 +77,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 class AuthWrapper extends StatelessWidget {
-  final ThemeMode themeMode;
-  final Function(ThemeMode) onThemeChanged;
-
-  const AuthWrapper({
-    Key? key,
-    required this.themeMode,
-    required this.onThemeChanged,
-  }) : super(key: key);
+  const AuthWrapper({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -110,10 +95,7 @@ class AuthWrapper extends StatelessWidget {
         }
         
         if (snapshot.hasData) {
-          return HomePage(
-            themeMode: themeMode,
-            onThemeChanged: onThemeChanged,
-          );
+          return const HomePage();
         }
         
         return const LanguageSelectionScreen();

@@ -329,10 +329,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (!mounted) return;
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
-            builder: (_) => HomePage(
-              themeMode: ThemeMode.system,
-              onThemeChanged: (_) {},
-            ),
+            builder: (_) => const HomePage(),
           ),
           (route) => false,
         );
@@ -356,10 +353,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
-          builder: (_) => HomePage(
-            themeMode: ThemeMode.system,
-            onThemeChanged: (_) {},
-          ),
+          builder: (_) => const HomePage(),
         ),
         (route) => false,
       );
