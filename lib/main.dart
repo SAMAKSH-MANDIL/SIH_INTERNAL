@@ -12,17 +12,20 @@ import 'theme_controller.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  // Initialize Firebase with error handling
+  bool firebaseInitialized = false;
   try {
     if (kIsWeb) {
-      // Avoid web crash if Firebase web options are not configured yet.
       debugPrint('Skipping Firebase.initializeApp() on web. Configure Firebase for web to enable auth.');
     } else {
       await Firebase.initializeApp();
+      firebaseInitialized = true;
       debugPrint('Firebase initialized successfully');
     }
   } catch (e) {
     debugPrint('Firebase initialization failed: $e');
-    // Continue without Firebase - app should still work
+    debugPrint('App will run in demo mode without Firebase');
+    firebaseInitialized = false;
   }
   
   await EasyLocalization.ensureInitialized();
@@ -32,12 +35,16 @@ void main() async {
       supportedLocales: const [Locale('en'), Locale('hi'), Locale('bn'), Locale('kho')],
       path: 'assets/translations',
       fallbackLocale: const Locale('en'),
-      child: MyApp(),
+      child: MyApp(firebaseInitialized: firebaseInitialized),
     ),
   );
 }
 
 class MyApp extends StatefulWidget {
+  final bool firebaseInitialized;
+  
+  const MyApp({Key? key, required this.firebaseInitialized}) : super(key: key);
+  
   @override
   State<MyApp> createState() => _MyAppState();
 }
@@ -79,20 +86,24 @@ class _MyAppState extends State<MyApp> {
       localizationsDelegates: context.localizationDelegates,
       supportedLocales: context.supportedLocales,
       locale: context.locale,
-      home: const SplashScreen(),
+      home: SplashScreen(firebaseInitialized: widget.firebaseInitialized),
     );
   }
 }
 
 class AuthWrapper extends StatelessWidget {
-  const AuthWrapper({Key? key}) : super(key: key);
+  final bool firebaseInitialized;
+  
+  const AuthWrapper({Key? key, required this.firebaseInitialized}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (kIsWeb) {
-      // On web, skip Firebase auth stream if Firebase isn't configured to prevent blank screen.
+    // If Firebase is not initialized, go directly to language selection
+    if (!firebaseInitialized || kIsWeb) {
+      debugPrint('AuthWrapper: Firebase not initialized, using demo mode');
       return const LanguageSelectionScreen();
     }
+    
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
