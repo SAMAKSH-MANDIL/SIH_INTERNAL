@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 // import 'package:firebase_auth/firebase_auth.dart'; // Removed for demo mode
 import 'package:easy_localization/easy_localization.dart';
 import 'home_page.dart';
