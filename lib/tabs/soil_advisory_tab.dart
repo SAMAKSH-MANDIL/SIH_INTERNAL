@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:image_picker/image_picker.dart';
-import 'dart:typed_data';
+import 'package:geolocator/geolocator.dart';
 
 class SoilAdvisoryTab extends StatefulWidget {
   const SoilAdvisoryTab({Key? key}) : super(key: key);
@@ -11,13 +10,68 @@ class SoilAdvisoryTab extends StatefulWidget {
 }
 
 class _SoilAdvisoryTabState extends State<SoilAdvisoryTab> {
-  Uint8List? _soilImage;
   String _analysisResult = "";
-  bool _isAnalyzing = false;
-  final ImagePicker _picker = ImagePicker();
+  bool _isLoadingAdvisory = false;
+  bool _askedLocationThisSession = false;
+  double? _latitude;
+  double? _longitude;
+
+  @override
+  void initState() {
+    super.initState();
+    // Ask for location when the tab is first shown
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _promptForLocationIfNeeded();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoadingAdvisory) {
+      return Center(
+        child: Container(
+          margin: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 8),
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(
+                tr('analyzing'),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 8),
+              AnimatedOpacity(
+                opacity: 0.7,
+                duration: const Duration(milliseconds: 700),
+                child: Text(
+                  tr('please_wait_while_we_fetch_advisory'),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -40,141 +94,7 @@ class _SoilAdvisoryTabState extends State<SoilAdvisoryTab> {
           ),
           const SizedBox(height: 20),
           
-          // Image Upload Section
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.brown.shade50,
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(
-                color: Colors.brown.shade200,
-                style: BorderStyle.solid,
-              ),
-            ),
-            child: Column(
-              children: [
-                if (_soilImage == null)
-                  Column(
-                    children: [
-                      Icon(
-                        Icons.cloud_upload,
-                        size: 60,
-                        color: Colors.brown.shade400,
-                      ),
-                      const SizedBox(height: 15),
-                      Text(
-                        tr('upload_soil_image'),
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.brown.shade700,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        tr('soil_image_instruction'),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.brown.shade500,
-                        ),
-                      ),
-                    ],
-                  )
-                else
-                  Column(
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.memory(
-                          _soilImage!,
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      const SizedBox(height: 15),
-                      Text(
-                        tr('soil_image_uploaded'),
-                        style: TextStyle(
-                          color: Colors.brown.shade700,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                
-                const SizedBox(height: 20),
-                
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () => _pickImage(ImageSource.camera),
-                        icon: const Icon(Icons.camera_alt),
-                        label: Text(tr('take_photo')),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.brown,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () => _pickImage(ImageSource.gallery),
-                        icon: const Icon(Icons.photo_library),
-                        label: Text(tr('from_gallery')),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.brown.shade300,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                
-                if (_soilImage != null) ...[
-                  const SizedBox(height: 15),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: _isAnalyzing ? null : _analyzeSoil,
-                      icon: _isAnalyzing
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
-                          : const Icon(Icons.analytics),
-                      label: Text(
-                        _isAnalyzing ? tr('analyzing') : tr('analyze_soil'),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ),
+          // Content removed as per requirement – advisory will be fetched by location
           
           const SizedBox(height: 20),
           
@@ -263,7 +183,6 @@ class _SoilAdvisoryTabState extends State<SoilAdvisoryTab> {
                       ElevatedButton.icon(
                         onPressed: () {
                           setState(() {
-                            _soilImage = null;
                             _analysisResult = "";
                           });
                         },
@@ -313,41 +232,97 @@ class _SoilAdvisoryTabState extends State<SoilAdvisoryTab> {
     );
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: source,
-        maxWidth: 800,
-        maxHeight: 600,
-        imageQuality: 80,
-      );
+  // Image selection and manual analysis removed
 
-      if (pickedFile != null) {
-        final bytes = await pickedFile.readAsBytes();
-        setState(() {
-          _soilImage = bytes;
-          _analysisResult = "";
-        });
+  Future<void> _promptForLocationIfNeeded() async {
+    if (_askedLocationThisSession) return;
+    _askedLocationThisSession = true;
+
+    // Simple dialog prompting user to enable location
+    final proceed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Enable Location'),
+          content: const Text(
+            'We use your location to provide soil advisory for your area.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Not now'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('Enable'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (proceed != true) return;
+    await _ensureLocationAndFetch();
+  }
+
+  Future<void> _ensureLocationAndFetch() async {
+    try {
+      setState(() => _isLoadingAdvisory = true);
+
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() => _isLoadingAdvisory = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location services are disabled.')),
+        );
+        return;
       }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          setState(() => _isLoadingAdvisory = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permission denied.')),
+          );
+          return;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        setState(() => _isLoadingAdvisory = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Location permission permanently denied.'),
+          ),
+        );
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.medium,
+      );
+      _latitude = position.latitude;
+      _longitude = position.longitude;
+
+      // Fetch advisory from backend using coordinates
+      await _fetchSoilAdvisoryForLocation(_latitude!, _longitude!);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(tr('image_pick_error')),
-          backgroundColor: Colors.red,
-        ),
+        const SnackBar(content: Text('Failed to get location.')),
       );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoadingAdvisory = false);
+      }
     }
   }
 
-  Future<void> _analyzeSoil() async {
-    setState(() => _isAnalyzing = true);
-
-    // Simulate soil analysis
-    await Future.delayed(const Duration(seconds: 3));
-
-    setState(() {
-      _isAnalyzing = false;
-      _analysisResult = tr('soil_analysis_mock_result');
-    });
+  Future<void> _fetchSoilAdvisoryForLocation(double lat, double lng) async {
+    // TODO: Replace this simulated delay with a real HTTP call
+    await Future.delayed(const Duration(seconds: 2));
+    // Do not show lat/lng to the user; just use them internally
   }
 }

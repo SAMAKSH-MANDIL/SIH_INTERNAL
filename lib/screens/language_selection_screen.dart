@@ -11,7 +11,7 @@ class LanguageSelectionScreen extends StatelessWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF0f2027), Color(0xFF203a43), Color(0xFF2c5364)],
+            colors: [Color(0xFF2e7d32), Color(0xFF43a047), Color(0xFF66bb6a)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -28,40 +28,28 @@ class LanguageSelectionScreen extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.08),
-                    borderRadius: BorderRadius.circular(24),
+                    color: Colors.white.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Colors.white24, width: 1),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 30,
-                        spreadRadius: 5,
-                      ),
-                    ],
                   ),
                   child: Column(
-                    children: [
-                      Image.asset(
-                        'assets/images/kisanone_logo.png',
-                        width: 140,
-                        fit: BoxFit.contain,
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
+                    children: const [
+                      SizedBox(height: 4),
+                      Text(
                         'KisanOne',
                         style: TextStyle(
-                          fontSize: 32,
+                          fontSize: 28,
                           fontWeight: FontWeight.w800,
                           color: Colors.white,
                           letterSpacing: 0.5,
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      SizedBox(height: 6),
                       Text(
                         'One Stop Solution for Farmers',
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 14,
+                          color: Colors.white70,
                         ),
                       ),
                     ],
@@ -71,8 +59,8 @@ class LanguageSelectionScreen extends StatelessWidget {
               const Text(
                 'Select Your Language',
                 style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
                   color: Colors.white,
                 ),
               ),
@@ -80,28 +68,24 @@ class LanguageSelectionScreen extends StatelessWidget {
               _buildLanguageButton(
                 context,
                 'English',
-                '🇺🇸',
                 const Locale('en'),
               ),
               const SizedBox(height: 15),
               _buildLanguageButton(
                 context,
                 'हिन्दी',
-                '🇮🇳',
                 const Locale('hi'),
               ),
               const SizedBox(height: 15),
               _buildLanguageButton(
                 context,
                 'বাংলা',
-                '🇧🇩',
                 const Locale('bn'),
               ),
               const SizedBox(height: 15),
               _buildLanguageButton(
                 context,
                 'खोर्टा',
-                '🇮🇳',
                 const Locale('kho'),
               ),
                   ],
@@ -117,7 +101,6 @@ class LanguageSelectionScreen extends StatelessWidget {
   Widget _buildLanguageButton(
     BuildContext context,
     String language,
-    String flag,
     Locale locale,
   ) {
     return SizedBox(
@@ -131,45 +114,29 @@ class LanguageSelectionScreen extends StatelessWidget {
             MaterialPageRoute(builder: (context) => const LoginScreen()),
           );
         },
-        style: ElevatedButton.styleFrom(
-          padding: EdgeInsets.zero,
-          elevation: 8,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-        ).merge(
-          ButtonStyle(
-            backgroundColor: WidgetStateProperty.resolveWith<Color>((_) => Colors.transparent),
-          ),
-        ),
+         style: ElevatedButton.styleFrom(
+           padding: EdgeInsets.zero,
+           elevation: 0,
+           backgroundColor: Colors.white,
+           foregroundColor: Colors.green,
+           shape: RoundedRectangleBorder(
+             borderRadius: BorderRadius.circular(12),
+             side: const BorderSide(color: Colors.black, width: 1),
+           ),
+         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              child: Ink(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Color(0xFF43cea2), Color(0xFF185a9d)],
-                  ),
-                  borderRadius: BorderRadius.all(Radius.circular(16)),
-                ),
-                child: Container(
-                  height: 60,
-                  alignment: Alignment.center,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(flag, style: const TextStyle(fontSize: 24)),
-                      const SizedBox(width: 15),
-                      Text(
-                        language,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
+              child: Container(
+                height: 60,
+                alignment: Alignment.center,
+                child: Text(
+                  language,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.green,
                   ),
                 ),
               ),

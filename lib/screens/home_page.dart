@@ -10,6 +10,7 @@ import '../tabs/soil_advisory_tab.dart';
 import '../tabs/crop_doctor_tab.dart';
 import '../tabs/store_tab.dart';
 import '../tabs/schemes_tab.dart';
+import 'my_orders_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   final ThemeController _themeController = ThemeController.instance;
 
   List<Widget> get _tabs => [
-        const HomeTab(),
+        HomeTab(onNavigateToTab: _onItemTapped),
         const CropAdvisoryTab(),
         const SoilAdvisoryTab(),
         const CropDoctorTab(),
@@ -47,31 +48,40 @@ class _HomePageState extends State<HomePage> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text(tr("language")),
+        backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1f4037) : Colors.white,
+        title: Text(tr("language"), style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.green)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Text("🇺🇸", style: TextStyle(fontSize: 24)),
-              title: const Text("English"),
+              leading: const SizedBox(width: 0),
+              title: Text("English", style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.green)),
               onTap: () {
                 context.setLocale(const Locale('en'));
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: const Text("🇮🇳", style: TextStyle(fontSize: 24)),
-              title: const Text("हिन्दी"),
+              leading: const SizedBox(width: 0),
+              title: Text("हिन्दी", style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.green)),
               onTap: () {
                 context.setLocale(const Locale('hi'));
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              leading: const Text("🇧🇩", style: TextStyle(fontSize: 24)),
-              title: const Text("বাংলা"),
+              leading: const SizedBox(width: 0),
+              title: Text("বাংলা", style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.green)),
               onTap: () {
                 context.setLocale(const Locale('bn'));
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const SizedBox(width: 0),
+              title: Text("खोर्टा", style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.green)),
+              onTap: () {
+                context.setLocale(const Locale('kho'));
                 Navigator.pop(context);
               },
             ),
@@ -118,6 +128,12 @@ class _HomePageState extends State<HomePage> {
             onSelected: (value) async {
               if (value == 'language') {
                 _showLanguageDialog(context);
+              } else if (value == 'my_orders') {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const MyOrdersScreen(),
+                  ),
+                );
               } else if (value == 'logout') {
                 // Demo logout - just clear local data
                 try {

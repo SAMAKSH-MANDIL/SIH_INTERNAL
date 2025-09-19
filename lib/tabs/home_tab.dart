@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
-import 'package:geolocator/geolocator.dart';
+// Location access is restricted to Soil Advisory tab only
 // import 'package:firebase_auth/firebase_auth.dart'; // Removed Firebase dependency
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeTab extends StatefulWidget {
-  const HomeTab({Key? key}) : super(key: key);
+  final void Function(int index)? onNavigateToTab;
+  const HomeTab({Key? key, this.onNavigateToTab}) : super(key: key);
 
   @override
   State<HomeTab> createState() => _HomeTabState();
 }
 
 class _HomeTabState extends State<HomeTab> {
-  String _location = "Loading...";
+  String _location = "Location disabled";
   String _weather = "25°C";
   String _humidity = "65%";
   String _windSpeed = "12 km/h";
@@ -21,29 +22,7 @@ class _HomeTabState extends State<HomeTab> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
     _loadSavedProfile();
-  }
-
-  Future<void> _getCurrentLocation() async {
-    try {
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
-
-      if (permission == LocationPermission.whileInUse ||
-          permission == LocationPermission.always) {
-        Position position = await Geolocator.getCurrentPosition();
-        setState(() {
-          _location = "${position.latitude.toStringAsFixed(2)}, ${position.longitude.toStringAsFixed(2)}";
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _location = "Location unavailable";
-      });
-    }
   }
 
   Future<void> _loadSavedProfile() async {
@@ -340,8 +319,10 @@ class _HomeTabState extends State<HomeTab> {
   }
 
   void _navigateToTab(int index) {
-    // This would typically use a callback to parent widget
-    // For now, we'll show a snackbar
+    if (widget.onNavigateToTab != null) {
+      widget.onNavigateToTab!(index);
+      return;
+    }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text("${tr('navigating_to')} ${_getTabName(index)}"),

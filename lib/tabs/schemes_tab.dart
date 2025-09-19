@@ -10,6 +10,7 @@ class SchemesTab extends StatefulWidget {
 
 class _SchemesTabState extends State<SchemesTab> {
   String _selectedCategory = 'All';
+  String _query = '';
   final List<String> _categories = ['All', 'Central', 'State', 'Credit', 'Insurance', 'Subsidy'];
 
   final List<Map<String, dynamic>> _schemes = [
@@ -106,10 +107,16 @@ class _SchemesTabState extends State<SchemesTab> {
   ];
 
   List<Map<String, dynamic>> get _filteredSchemes {
-    if (_selectedCategory == 'All') {
-      return _schemes;
-    }
-    return _schemes.where((scheme) => scheme['category'] == _selectedCategory || scheme['type'] == _selectedCategory).toList();
+    final List<Map<String, dynamic>> byCategory = _selectedCategory == 'All'
+        ? _schemes
+        : _schemes.where((scheme) => scheme['category'] == _selectedCategory || scheme['type'] == _selectedCategory).toList();
+    if (_query.trim().isEmpty) return byCategory;
+    final lower = _query.toLowerCase();
+    return byCategory.where((s) =>
+      (s['name'] as String).toLowerCase().contains(lower) ||
+      (s['fullName'] as String).toLowerCase().contains(lower) ||
+      (s['description'] as String).toLowerCase().contains(lower)
+    ).toList();
   }
 
   @override
@@ -176,6 +183,7 @@ class _SchemesTabState extends State<SchemesTab> {
           padding: const EdgeInsets.all(16),
           color: Colors.indigo.shade50,
           child: TextField(
+            onChanged: (val) => setState(() => _query = val),
             decoration: InputDecoration(
               hintText: tr('search_schemes'),
               prefixIcon: const Icon(Icons.search, color: Colors.indigo),
