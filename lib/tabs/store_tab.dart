@@ -205,7 +205,7 @@ class _StoreTabState extends State<StoreTab> {
                 crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 4,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 0.78,
+                childAspectRatio: 0.65,
               ),
               itemCount: _filteredProducts.length,
               itemBuilder: (context, index) {
@@ -233,7 +233,7 @@ class _StoreTabState extends State<StoreTab> {
         children: [
           // Product Image
           Container(
-            height: 100,
+            height: 120,
             width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.grey.shade100,
@@ -242,7 +242,7 @@ class _StoreTabState extends State<StoreTab> {
             child: Center(
               child: Text(
                 product['image'],
-                style: const TextStyle(fontSize: 40),
+                style: const TextStyle(fontSize: 50),
               ),
             ),
           ),
@@ -258,22 +258,22 @@ class _StoreTabState extends State<StoreTab> {
                     product['name'],
                     style: const TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                      fontSize: 15,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                   
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 6),
                   
                   // Description
                   Text(
                     product['description'],
                     style: TextStyle(
                       color: Colors.grey.shade600,
-                      fontSize: 12,
+                      fontSize: 13,
                     ),
-                    maxLines: 2,
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
                   
@@ -300,7 +300,7 @@ class _StoreTabState extends State<StoreTab> {
                         product['price'],
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                          fontSize: 17,
                           color: Colors.green,
                         ),
                       ),
@@ -308,7 +308,7 @@ class _StoreTabState extends State<StoreTab> {
                       Text(
                         product['originalPrice'],
                         style: TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           color: Colors.grey.shade500,
                           decoration: TextDecoration.lineThrough,
                         ),

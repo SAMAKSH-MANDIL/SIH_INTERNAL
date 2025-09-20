@@ -157,7 +157,7 @@ class _HomeTabState extends State<HomeTab> {
               ),
               _buildQuickActionCard(
                 Icons.grass,
-                tr('soil_test'),
+                tr('soil_advisory'),
                 Colors.brown,
                 () => _navigateToTab(2),
               ),

@@ -86,7 +86,7 @@ class _SoilAdvisoryTabState extends State<SoilAdvisoryTab> {
           ),
           const SizedBox(height: 8),
           Text(
-            tr('soil_advisory_subtitle'),
+            'Get crop recommendations based on your location and soil conditions',
             style: const TextStyle(
               color: Colors.grey,
               fontSize: 16,

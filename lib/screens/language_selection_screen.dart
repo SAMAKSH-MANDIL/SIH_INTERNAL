@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'login_screen.dart';
 
 class LanguageSelectionScreen extends StatelessWidget {
@@ -108,6 +109,16 @@ class LanguageSelectionScreen extends StatelessWidget {
       height: 60,
       child: ElevatedButton(
         onPressed: () {
+          // Check if Khortha language is selected
+          if (locale.languageCode == 'kho') {
+            _showKhorthaPopup(context);
+            return;
+          }
+          
+          // Save language preference
+          _saveLanguagePreference(locale);
+          
+          // Set locale and navigate
           context.setLocale(locale);
           Navigator.pushReplacement(
             context,
@@ -145,5 +156,43 @@ class LanguageSelectionScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _showKhorthaPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'खोर्टा भाषा',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            'इस भाषा में ऐप अभी विकसित हो रहा है। कृपया किसी अन्य भाषा का चयन करें।',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'ठीक है',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _saveLanguagePreference(Locale locale) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('selected_language', locale.languageCode);
+    } catch (e) {
+      debugPrint('Error saving language preference: $e');
+    }
   }
 }

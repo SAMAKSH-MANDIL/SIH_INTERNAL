@@ -56,7 +56,8 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: const SizedBox(width: 0),
               title: Text("English", style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.green)),
-              onTap: () {
+              onTap: () async {
+                await _saveLanguagePreference(const Locale('en'));
                 context.setLocale(const Locale('en'));
                 Navigator.pop(context);
               },
@@ -64,7 +65,8 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: const SizedBox(width: 0),
               title: Text("हिन्दी", style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.green)),
-              onTap: () {
+              onTap: () async {
+                await _saveLanguagePreference(const Locale('hi'));
                 context.setLocale(const Locale('hi'));
                 Navigator.pop(context);
               },
@@ -72,7 +74,8 @@ class _HomePageState extends State<HomePage> {
             ListTile(
               leading: const SizedBox(width: 0),
               title: Text("বাংলা", style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.green)),
-              onTap: () {
+              onTap: () async {
+                await _saveLanguagePreference(const Locale('bn'));
                 context.setLocale(const Locale('bn'));
                 Navigator.pop(context);
               },
@@ -81,14 +84,51 @@ class _HomePageState extends State<HomePage> {
               leading: const SizedBox(width: 0),
               title: Text("खोर्टा", style: TextStyle(color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.green)),
               onTap: () {
-                context.setLocale(const Locale('kho'));
-                Navigator.pop(context);
+                _showKhorthaPopup(context);
               },
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _showKhorthaPopup(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+            'खोर्टा भाषा',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            'इस भाषा में ऐप अभी विकसित हो रहा है। कृपया किसी अन्य भाषा का चयन करें।',
+            style: TextStyle(fontSize: 16),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'ठीक है',
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _saveLanguagePreference(Locale locale) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('selected_language', locale.languageCode);
+    } catch (e) {
+      debugPrint('Error saving language preference: $e');
+    }
   }
 
   @override
