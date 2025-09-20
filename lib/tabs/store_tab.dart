@@ -205,7 +205,7 @@ class _StoreTabState extends State<StoreTab> {
                 crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 4,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
-                childAspectRatio: 0.65,
+                childAspectRatio: 0.75,
               ),
               itemCount: _filteredProducts.length,
               itemBuilder: (context, index) {
@@ -233,7 +233,7 @@ class _StoreTabState extends State<StoreTab> {
         children: [
           // Product Image
           Container(
-            height: 120,
+            height: 80,
             width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.grey.shade100,
@@ -242,7 +242,7 @@ class _StoreTabState extends State<StoreTab> {
             child: Center(
               child: Text(
                 product['image'],
-                style: const TextStyle(fontSize: 50),
+                style: const TextStyle(fontSize: 35),
               ),
             ),
           ),
@@ -378,6 +378,18 @@ class _StoreTabState extends State<StoreTab> {
 
   void _addToCart(Map<String, dynamic> product) {
     final String name = product['name'];
+    final bool inStock = product['inStock'] as bool;
+    
+    if (!inStock) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$name is out of stock'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+    
     setState(() {
       _cart[name] = (_cart[name] ?? 0) + 1;
     });
@@ -428,6 +440,7 @@ class _StoreTabState extends State<StoreTab> {
       SnackBar(
         content: Text('$name added to cart'),
         backgroundColor: Colors.green,
+        duration: const Duration(seconds: 2),
         action: SnackBarAction(
           label: 'VIEW CART',
           textColor: Colors.white,
@@ -436,6 +449,7 @@ class _StoreTabState extends State<StoreTab> {
       ),
     );
   }
+
 
   @override
   void didChangeDependencies() {
@@ -506,6 +520,16 @@ class _CartScreenState extends State<_CartScreen> {
     widget.onUpdate(name, qty);
   }
 
+  void _clearAllItems() {
+    setState(() {
+      _localCart.clear();
+    });
+    // Notify parent to clear all items
+    for (final entry in _localCart.entries.toList()) {
+      widget.onUpdate(entry.key, 0);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final entries = _localCart.entries.toList();
@@ -516,6 +540,34 @@ class _CartScreenState extends State<_CartScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text('My Cart'),
+        actions: [
+          if (entries.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.clear_all),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Clear Cart'),
+                    content: const Text('Are you sure you want to clear all items from your cart?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _clearAllItems();
+                        },
+                        child: const Text('Clear', style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+        ],
       ),
       body: entries.isEmpty
           ? const Center(child: Text('Your cart is empty'))
